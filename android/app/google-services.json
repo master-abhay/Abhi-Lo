@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "812842707552",
+    "project_id": "abhi-lo",
+    "storage_bucket": "abhi-lo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812842707552:android:c41ea6a5a6805625f43105",
+        "android_client_info": {
+          "package_name": "com.example.abhi_lo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9bV3aPceNKl_b0kWeUe-K8KeFCsOsWyE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
