@@ -1,14 +1,14 @@
 import 'package:abhi_lo/services/navigation_services.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
+import '../models/addItem_model.dart';
 import '../utils.dart';
 
 class FoodDetail extends StatefulWidget {
-  const FoodDetail({super.key});
+  final AddItem addItem;
+
+  const FoodDetail({super.key, required this.addItem});
 
   @override
   State<FoodDetail> createState() => _FoodDetailState();
@@ -58,7 +58,7 @@ class _FoodDetailState extends State<FoodDetail> {
   Widget _buildUI() {
     return SafeArea(
         child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
       child: Column(
         children: [
           _foodImage(),
@@ -78,9 +78,36 @@ class _FoodDetailState extends State<FoodDetail> {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: Image.asset(
-            "images/dummyImage.jpg",
+          child: Image.network(
+            widget.addItem.imgUrl!,
             height: MediaQuery.sizeOf(context).width * 0.6,
+            errorBuilder: (context, error, stackTrace) {
+              // Return a custom error widget when image fails to load
+              return Column(
+                children: [
+                  ClipRRect(
+                    child: Image.asset(
+                      "images/error_occured.png",
+                      height: MediaQuery.sizeOf(context).width * 0.6,
+                    ),
+                  ),
+                  const Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                      ),
+                      // Text(error.toString().substring(0,20),style: TextStyle(color: Colors.red),),
+                      Text(
+                        "Failed to Load Image....",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  )
+                ],
+              ); // You can replace this with any custom error widget
+            },
           ),
         ),
       ],
@@ -112,12 +139,12 @@ class _FoodDetailState extends State<FoodDetail> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Text(
+              //   "Mediterranean",
+              //   style: semiboldTextStyle(),
+              // ),
               Text(
-                "Mediterranean",
-                style: semiboldTextStyle(),
-              ),
-              Text(
-                "Chickpea salad",
+                widget.addItem.itemName!,
                 style: boldTextStyle(),
               )
             ],
@@ -178,16 +205,13 @@ class _FoodDetailState extends State<FoodDetail> {
       padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
       child: Container(
         child: Text(
-          "Apple, Banana, Chair, Elephant, Guitar, Sunflower, Mountain, Laptop, "
-          "Ocean, Elephant, Basketball, Clock, Train, Umbrella, Rainbow, Telescope, Lemon, Piano, Kangaroo, Bicycle,"
-          " Bookshelf, Chocolate, Dragon, Fireworks, Galaxy, Hammock, Iceberg, Jupiter, Kite, Lighthouse, Mushroom, Notebook,"
-          " Octopus, Pineapple, Quilt, Robot, Satellite, Telescope, Unicorn, Volleyball, Waterfall, Xylophone,"
-          " Yogurt, Zebra, Castle, Diamond, Eggplant, Flamingo, Giraffe, Helicopter",
+          widget.addItem.itemDetail!,
           style: descriptionTextStyle(),
         ),
       ),
     );
   }
+
 
   Widget _deliveryTime() {
     return Padding(
@@ -232,25 +256,25 @@ class _FoodDetailState extends State<FoodDetail> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-         const  Column(
+          const Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Total Price",
-                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Text(
                 "\$25",
-                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               )
             ],
           ),
           Row(
             children: [
               GestureDetector(
-                onTap: (){},
+                onTap: () {},
                 child: Material(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),
@@ -258,15 +282,16 @@ class _FoodDetailState extends State<FoodDetail> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                        const  Text(
+                          const Text(
                             "Add to cart",
                             style: TextStyle(
-                                color: Colors.white, fontWeight: FontWeight.bold),
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
                             width: MediaQuery.sizeOf(context).width * 0.02,
                           ),
-                         const Material(
+                          const Material(
                               color: Colors.green,
                               child: Icon(
                                 Icons.shopping_cart_outlined,

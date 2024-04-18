@@ -25,7 +25,7 @@ class NavigationServices {
   Map<String, Widget Function(BuildContext)> _routes = {
     "/home": (context) => Home(),
     "/curvedNavigationBar": (context) => curvedBottomNavBar(),
-    "/foodDetail": (context) => FoodDetail(),
+    // "/foodDetail": (context) => FoodDetail(),
     "/login": (context) => LoginPage(),
     "/signUp": (context) => SignUp(),
     "/onBoard": (context) => OnBoard(),

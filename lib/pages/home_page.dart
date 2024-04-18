@@ -1,4 +1,5 @@
 import 'package:abhi_lo/models/addItem_model.dart';
+import 'package:abhi_lo/pages/food_detail.dart';
 import 'package:abhi_lo/services/database_services.dart';
 import 'package:abhi_lo/services/navigation_services.dart';
 import 'package:abhi_lo/services/shared_prefrences.dart';
@@ -249,6 +250,10 @@ class _HomeState extends State<Home> {
                         "-------------------->>>>>>>>>>>>>>>>>>>>>>printing the itemName in ListView.builder: ${item.itemName}");
 
                     return ViewFoodItemsVertically(
+                      onTap: (){
+                        _navigationServices.push(MaterialPageRoute(builder: (context)=>FoodDetail(addItem: item,)));
+
+                      },
                         itemName: item.itemName!,
                         itemDetails: item.itemDetail!,
                         itemPrice: item.itemPrice!,
@@ -264,7 +269,9 @@ class _HomeState extends State<Home> {
               itemBuilder: (context, index) {
                 final AddItem item = docList[index].data() as AddItem;
                 return ViewFoodItemsHorizontally(
-                  onTap: () {},
+                  onTap: () {
+                    _navigationServices.push(MaterialPageRoute(builder: (context)=>FoodDetail(addItem: item,)));
+                  },
                   itemName: item.itemName!,
                   itemDetails: item.itemDetail!,
                   itemPrice: item.itemPrice!,

@@ -50,6 +50,29 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                           height: 110,
                           width: 170,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Return a custom error widget when image fails to load
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+
+                              children: [
+                                ClipRRect(
+                                  child: Image.asset(
+                                    "images/error_occured.png",
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+
+                                   const Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                    ),
+                                    // Text(error.toString().substring(0,20),style: TextStyle(color: Colors.red),),
+
+                              ],
+                            ); // You can replace this with any custom error widget
+                          },
                         ),
 
                       ),
