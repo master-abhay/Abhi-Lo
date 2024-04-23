@@ -4,11 +4,13 @@ const String UID = 'uid';
 const String NAME = 'name';
 const String WALLET = 'wallet';
 const String EMAIL = 'email';
+const String PROFILEIMAGE = 'profileImage';
 
 class UserProfile {
   String? uid;
   String? name;
   String? email;
+  String? profileImage;
   int wallet = 0;
 
   //another style of creating constructor: because if want to use only some characters then we use only that.
@@ -16,7 +18,8 @@ class UserProfile {
       {required this.name,
       required this.uid,
       required this.wallet,
-      required this.email});
+      required this.email,
+      this.profileImage = ""});
 
   // Another named Constructor: which we calling as fromJSON
 
@@ -28,6 +31,7 @@ class UserProfile {
     uid = json[UID];
     email = json[EMAIL];
     wallet = json[WALLET];
+    profileImage = json[PROFILEIMAGE];
   }
 
   factory UserProfile.fromJson(DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -37,7 +41,8 @@ class UserProfile {
         name: user?[NAME],
         uid: user?[UID],
         wallet: user?[WALLET],
-        email: user?[EMAIL]);
+        email: user?[EMAIL],
+        profileImage: user?[PROFILEIMAGE]);
   }
 
   Map<String, dynamic> toFirestore() {
@@ -46,6 +51,7 @@ class UserProfile {
     user[UID] = uid;
     user[EMAIL] = email;
     user[WALLET] = wallet;
+    user[PROFILEIMAGE] = profileImage;
 
     return user;
   }

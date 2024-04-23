@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../Widgets/bottom_navigation_bar.dart';
 import '../admin/add_food.dart';
 import '../admin/admin_home_page.dart';
+import '../pages/food_cart.dart';
 import '../pages/food_detail.dart';
 import '../pages/forget_password.dart';
 import '../pages/home_page.dart';
@@ -33,6 +34,9 @@ class NavigationServices {
     "/adminLogin": (context) => AdminLogin(),
     "/adminHome": (context) => AdminHomePage(),
     "/addFood": (context) => AddFood(),
+    "/foodCart": (context) => FoodCart(),
+
+
   };
 
   Map<String, Widget Function(BuildContext)> get routes {

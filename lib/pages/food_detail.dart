@@ -1,3 +1,6 @@
+import 'package:abhi_lo/models/cart_model.dart';
+import 'package:abhi_lo/models/user_profile.dart';
+import 'package:abhi_lo/services/database_services.dart';
 import 'package:abhi_lo/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -19,10 +22,16 @@ class _FoodDetailState extends State<FoodDetail> {
 
   final GetIt _getIt = GetIt.instance;
   late NavigationServices _navigationServices;
+  late DatabaseServices _databaseServices;
+
+  int _totalAmount = 0;
 
   @override
   void initState() {
     _navigationServices = _getIt.get<NavigationServices>();
+    _databaseServices = _getIt.get<DatabaseServices>();
+
+    _totalAmount = int.parse(widget.addItem.itemPrice!);
     super.initState();
   }
 
@@ -76,38 +85,37 @@ class _FoodDetailState extends State<FoodDetail> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: Image.network(
-            widget.addItem.imgUrl!,
-            height: MediaQuery.sizeOf(context).width * 0.6,
-            errorBuilder: (context, error, stackTrace) {
-              // Return a custom error widget when image fails to load
-              return Column(
-                children: [
-                  ClipRRect(
-                    child: Image.asset(
-                      "images/error_occured.png",
+        Material(
+          elevation: 5,
+          borderRadius: BorderRadius.circular(40),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Container(
+              height: MediaQuery.sizeOf(context).width * 0.6,
+              width: MediaQuery.sizeOf(context).width * 0.9,
+              child: Image.network(
+                widget.addItem.imgUrl!,
+                fit: BoxFit.cover,
+                // width: MediaQuery.sizeOf(context).width * 0.6,
+                // height: MediaQuery.sizeOf(context).width * 0.6,
+
+                errorBuilder: (context, error, stackTrace) {
+                  // Return a custom error widget when image fails to load
+                  return ClipRRect(
+                    child: Container(
                       height: MediaQuery.sizeOf(context).width * 0.6,
+                      width: MediaQuery.sizeOf(context).width * 0.6,
+                      child: Image.asset(
+                        "images/error_occured.png",
+                        fit: BoxFit.contain,
+                        // width: MediaQuery.sizeOf(context).width * 0.6,
+                        // height: MediaQuery.sizeOf(context).width * 0.6,
+                      ),
                     ),
-                  ),
-                  const Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                      ),
-                      // Text(error.toString().substring(0,20),style: TextStyle(color: Colors.red),),
-                      Text(
-                        "Failed to Load Image....",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
-                  )
-                ],
-              ); // You can replace this with any custom error widget
-            },
+                  ); // You can replace this with any custom error widget
+                },
+              ),
+            ),
           ),
         ),
       ],
@@ -162,6 +170,8 @@ class _FoodDetailState extends State<FoodDetail> {
                     if (quantity > 1) {
                       setState(() {
                         --quantity;
+                        _totalAmount =
+                            _totalAmount - int.parse(widget.addItem.itemPrice!);
                       });
                     }
                   }),
@@ -180,6 +190,8 @@ class _FoodDetailState extends State<FoodDetail> {
                   onTap: () {
                     setState(() {
                       ++quantity;
+                      _totalAmount =
+                          _totalAmount + int.parse(widget.addItem.itemPrice!);
                     });
                   })
             ],
@@ -202,7 +214,8 @@ class _FoodDetailState extends State<FoodDetail> {
 
   Widget _foodDescription() {
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+      padding:
+          const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0, top: 10),
       child: Container(
         child: Text(
           widget.addItem.itemDetail!,
@@ -211,7 +224,6 @@ class _FoodDetailState extends State<FoodDetail> {
       ),
     );
   }
-
 
   Widget _deliveryTime() {
     return Padding(
@@ -256,25 +268,47 @@ class _FoodDetailState extends State<FoodDetail> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 "Total Price",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Text(
-                "\$25",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                "\$${_totalAmount.toString()}",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               )
             ],
           ),
           Row(
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  print(
+                      "Total Amount is -------------------------->>>>>>>>>>>>>>>>>>$_totalAmount");
+                  Cart cart = Cart(
+                      itemName: widget.addItem.itemName,
+                      quantity: quantity.toString(),
+                      totalAmount: _totalAmount.toString(),
+                      imageUrl: widget.addItem.imgUrl,
+                      itemId: DateTime.now().microsecondsSinceEpoch.toString() + DateTime.now().toString());
+
+                  print(cart.totalAmount);
+
+                  UserProfile? userProfile =
+                      await _databaseServices.getCurrentUser();
+                  print("-------------->>>>>>>>>>>${userProfile?.uid}");
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      elevation: 5,
+                      backgroundColor: Colors.orangeAccent,
+                      content: Text("Added to Cart")));
+
+                  await _databaseServices.setupCart(cart, userProfile!.uid);
+                },
                 child: Material(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),

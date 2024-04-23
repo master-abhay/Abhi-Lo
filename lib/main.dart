@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
       routes: _navigationServices.routes,
       initialRoute:_authServices.user != null ? "/curvedNavigationBar" : "/onBoard",
       // initialRoute: "/adminHome",
-      // initialRoute:_authServices.user != null ? "/adminHome" : "/onBoard",
+      // initialRoute:"/adminLogin",
 
     );
   }

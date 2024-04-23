@@ -27,6 +27,14 @@ class _AddItemFormFieldState extends State<AddItemFormField> {
           borderRadius: BorderRadius.circular(10)),
       child: TextFormField(
         onSaved: widget.onSaved,
+        validator: (value){
+          if(value != null && value.isNotEmpty){
+            return null;
+          }
+          else{
+            return "Enter ${widget.hintText}";
+          }
+        },
         decoration: InputDecoration(
           border: InputBorder.none,
           focusedBorder: InputBorder.none,

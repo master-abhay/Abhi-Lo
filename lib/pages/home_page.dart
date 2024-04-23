@@ -4,7 +4,6 @@ import 'package:abhi_lo/services/database_services.dart';
 import 'package:abhi_lo/services/navigation_services.dart';
 import 'package:abhi_lo/services/shared_prefrences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 
 import '../Widgets/food_option.dart';
@@ -27,7 +26,7 @@ class _HomeState extends State<Home> {
   List<String> streamCategoryList = [
     "_itemBurgerCollectionReference",
     "_itemIceCreamCollectionReference",
-        "_itemNoodlesCollectionReference",
+    "_itemNoodlesCollectionReference",
     "_itemPizzaCollectionReference",
   ];
 
@@ -122,9 +121,14 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.symmetric(
               vertical: MediaQuery.sizeOf(context).height * 0.005,
               horizontal: MediaQuery.sizeOf(context).width * 0.01),
-          child: const Icon(
-            Icons.shopping_cart,
-            color: Colors.white,
+          child: GestureDetector(
+            onTap: () {
+              _navigationServices.pushNamed("/foodCart");
+            },
+            child: const Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
           ),
         )
       ],
@@ -200,7 +204,7 @@ class _HomeState extends State<Home> {
   Widget _viewFoodItemsHorizontally() {
     return Container(
       // color: Colors.red,
-      height: MediaQuery.sizeOf(context).height*0.3,
+      height: MediaQuery.sizeOf(context).height * 0.3,
       // Set the height of the horizontal list
       padding: EdgeInsets.symmetric(
           vertical: MediaQuery.sizeOf(context).height * 0.01,
@@ -213,8 +217,7 @@ class _HomeState extends State<Home> {
   Widget _viewFoodItemsVertically() {
     return Expanded(
       child: getStreamBuilder(
-          itemCategory: selectedItemCategory,
-          scrollDirection: "vertical"),
+          itemCategory: selectedItemCategory, scrollDirection: "vertical"),
     );
   }
 
@@ -250,10 +253,12 @@ class _HomeState extends State<Home> {
                         "-------------------->>>>>>>>>>>>>>>>>>>>>>printing the itemName in ListView.builder: ${item.itemName}");
 
                     return ViewFoodItemsVertically(
-                      onTap: (){
-                        _navigationServices.push(MaterialPageRoute(builder: (context)=>FoodDetail(addItem: item,)));
-
-                      },
+                        onTap: () {
+                          _navigationServices.push(MaterialPageRoute(
+                              builder: (context) => FoodDetail(
+                                    addItem: item,
+                                  )));
+                        },
                         itemName: item.itemName!,
                         itemDetails: item.itemDetail!,
                         itemPrice: item.itemPrice!,
@@ -270,7 +275,10 @@ class _HomeState extends State<Home> {
                 final AddItem item = docList[index].data() as AddItem;
                 return ViewFoodItemsHorizontally(
                   onTap: () {
-                    _navigationServices.push(MaterialPageRoute(builder: (context)=>FoodDetail(addItem: item,)));
+                    _navigationServices.push(MaterialPageRoute(
+                        builder: (context) => FoodDetail(
+                              addItem: item,
+                            )));
                   },
                   itemName: item.itemName!,
                   itemDetails: item.itemDetail!,

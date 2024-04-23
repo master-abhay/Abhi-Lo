@@ -19,7 +19,7 @@ class _AdminCustomFormFieldState extends State<AdminCustomFormField> {
       onSaved: widget.onSaved,
       obscureText: widget.obscureText,
       validator: (value){
-        if(value != null){
+        if(value != null && value.isNotEmpty){
           return null;
         }else{
           return "Enter ${widget.hintText}";

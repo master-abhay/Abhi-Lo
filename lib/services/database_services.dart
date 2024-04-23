@@ -1,13 +1,16 @@
 import 'package:abhi_lo/models/addItem_model.dart';
 import 'package:abhi_lo/models/user_profile.dart';
 import 'package:abhi_lo/services/auth_Services.dart';
+import 'package:abhi_lo/services/shared_prefrences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 
+import '../models/cart_model.dart';
+
 class DatabaseServices {
   late AuthServices _authServices;
+  late LocalDataSaver _localDataSaver;
 
-  final GetIt _getIt = GetIt.instance;
   final FirebaseFirestore _firebaseFirestore =
       FirebaseFirestore.instance; //this is a database
 
@@ -19,15 +22,29 @@ class DatabaseServices {
 
   CollectionReference? _itemBurgerCollectionReference;
 
-  DatabaseServices() {
-    _authServices = _getIt.get<AuthServices>();
+  CollectionReference? _cartCollectionReferences;
 
+  DatabaseServices() {
+    GetIt _getIt = GetIt.instance;
+    _authServices = _getIt.get<AuthServices>();
+    _localDataSaver = _getIt.get<LocalDataSaver>();
+
+    // getLocalData().then((value) {
     _setupCollectionReferences();
     _setupIceCreamCollectionReferences();
     _setupNoodlesCollectionReferences();
     _setupPizzaCollectionReferences();
     _setupBurgerCollectionReferences();
+    // _setupCartCollectionReferences();
+    // });
   }
+
+// String? uid;
+// Future<void> getLocalData()async{
+//     String? _uid = await _localDataSaver.getUID();
+//     print("------------------inside the getLocalData: $_uid");
+//     uid = _uid;
+// }
 
   //Correct Version
   // void _setupCollectionReferences() {
@@ -51,6 +68,23 @@ class DatabaseServices {
 
   Future<void> setUpUser(UserProfile userProfile) async {
     await _userCollectionReference!.doc(userProfile.uid).set(userProfile);
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(userProfile.uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
+  }
+
+  Future<void> updateUserProfile(String? uid, String? imgUrl) async {
+    await _userCollectionReference!
+        .doc(uid)
+        .update({'profileImage': '$imgUrl'});
+  }
+
+  Future<void> deleteUser(String uid) async {
+    await _userCollectionReference!.doc(uid).delete();
   }
 
   //Correct Version
@@ -206,5 +240,67 @@ class DatabaseServices {
     await _userCollectionReference!
         .doc(_authServices.user!.uid)
         .update({'wallet': FieldValue.increment(value)});
+  }
+
+  Future<void> setUpCartCollection(UserProfile userProfile) async {
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(userProfile.uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
+  }
+
+  Future<void> setupCart(Cart cart, String? uid) async {
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
+
+    await _cartCollectionReferences!.doc(cart.itemId).set(cart);
+    print("Executed Successfully");
+  }
+
+  Stream<QuerySnapshot<Cart>>? getCartData(String uid) {
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
+    return _cartCollectionReferences!.snapshots()
+        as Stream<QuerySnapshot<Cart>>;
+  }
+
+  Future<void> deleteCartData(String uid) async {
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
+
+    final cartSnapshot = await _cartCollectionReferences!.get();
+    for (QueryDocumentSnapshot doc in cartSnapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<void> deleteCartItem(String uid,String cartItemId) async{
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+        fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+        toFirestore: (Cart cart, _) => cart.toFireStore());
+
+    await _cartCollectionReferences!.doc(cartItemId).delete();
   }
 }

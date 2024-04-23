@@ -26,7 +26,14 @@ Future<void> setupFirebase() async {
 Future<void> registerServices() async {
   GetIt _getIt = GetIt.instance;
 
-  print("---------------->>>>>>>>>>>>>>>registring services: <<<<<<<<<<<<<<<<<<<<<<<------------------");
+
+  _getIt.registerSingleton<LocalDataSaver>(LocalDataSaver());
+  print(
+      "---------------->>>>>>>>>>>>>>>registring services: LocalDataSaverServices");
+
+
+  print(
+      "---------------->>>>>>>>>>>>>>>registring services: <<<<<<<<<<<<<<<<<<<<<<<------------------");
   _getIt.registerSingleton<NavigationServices>(NavigationServices());
   print(
       "---------------->>>>>>>>>>>>>>>registring services: Navigation Services");
@@ -37,18 +44,17 @@ Future<void> registerServices() async {
   _getIt.registerSingleton<AuthServices>(AuthServices());
   print("---------------->>>>>>>>>>>>>>>registring services: AuthServices");
 
-  _getIt.registerSingleton<DatabaseServices>(DatabaseServices());
-  print("---------------->>>>>>>>>>>>>>>registring services: DatabaseServices");
 
-  _getIt.registerSingleton<LocalDataSaver>(LocalDataSaver());
-  print(
-      "---------------->>>>>>>>>>>>>>>registring services: LocalDataSaverServices");
+
 
   _getIt.registerSingleton<MediaServices>(MediaServices());
   print("---------------->>>>>>>>>>>>>>>registring services: MediaServices");
 
   _getIt.registerSingleton<StorageServices>(StorageServices());
   print("---------------->>>>>>>>>>>>>>>registring services: StorageServices");
+
+  _getIt.registerSingleton<DatabaseServices>(DatabaseServices());
+  print("---------------->>>>>>>>>>>>>>>registring services: DatabaseServices");
 
   // _getIt.registerSingleton<LocalDataSaver>(LocalDataSaver());
 }

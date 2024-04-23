@@ -22,7 +22,7 @@ class AddFood extends StatefulWidget {
 
 class _AddFoodState extends State<AddFood> {
   late MediaServices _mediaServices;
-   File? selectedImage;
+  File? selectedImage;
 
   late GlobalKey<FormState> _addItemFormKey;
   String? itemName, itemPrice, itemDetail, itemCategory;
@@ -184,7 +184,7 @@ class _AddFoodState extends State<AddFood> {
                 AddItemFormField(
                   onSaved: (value) {
                     setState(() {
-                      itemDetail = value;
+                      itemDetail = value!.replaceAll(RegExp(r'\s+'), ' ').trim();
                       print(
                           "-------------------->>>>>>>>>>>>>>>>>printing the itemName: $itemDetail");
                     });
@@ -269,17 +269,15 @@ class _AddFoodState extends State<AddFood> {
                                     itemDetail: itemDetail,
                                     itemCategory: itemCategory);
 
-                                bool result = await _databaseServices.setUpItem(addItem);
-                               if(result){
-                                 _alertServices.showToast(text: "Item Added successfully");
-                               }
-                                else{
-                                 _alertServices.showToast(text: "Something went Wrong");
-                               }
-
-
-
-
+                                bool result =
+                                    await _databaseServices.setUpItem(addItem);
+                                if (result) {
+                                  _alertServices.showToast(
+                                      text: "Item Added successfully");
+                                } else {
+                                  _alertServices.showToast(
+                                      text: "Something went Wrong");
+                                }
                               }
                             },
                             buttonColor: Colors.black)))

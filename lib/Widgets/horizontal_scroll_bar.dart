@@ -35,7 +35,7 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
             padding: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width*0.02,vertical:MediaQuery.sizeOf(context).height*0.02 ),
             child: Column(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
@@ -43,38 +43,32 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: Image.network(
-                          widget.itemImgUrl,
-                          height: 110,
-                          width: 170,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            // Return a custom error widget when image fails to load
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-
-                              children: [
-                                ClipRRect(
+                      Container
+                        (
+                        height: 110,
+                        width: 170,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Image.network(
+                            widget.itemImgUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Return a custom error widget when image fails to load
+                              return Container(
+                                height:110,
+                                width: 170,
+                                child: ClipRRect(
                                   child: Image.asset(
                                     "images/error_occured.png",
-                                    height: 60,
-                                    width: 60,
+                                    fit: BoxFit.contain,
+
                                   ),
                                 ),
+                              ); // You can replace this with any custom error widget
+                            },
+                          ),
 
-                                   const Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
-                                    ),
-                                    // Text(error.toString().substring(0,20),style: TextStyle(color: Colors.red),),
-
-                              ],
-                            ); // You can replace this with any custom error widget
-                          },
                         ),
-
                       ),
                     ],
                   ),
@@ -89,15 +83,15 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                     children: [
                       Text(
                         widget.itemName,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.itemDetails.length < 30 ? widget.itemDetails : widget.itemDetails.substring(0,30),
-                        style: TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.black54),
+                        widget.itemDetails.length < 20 ? widget.itemDetails : "${widget.itemDetails.substring(0,20)}..",
+                        style: const TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.black54),
                       ),
                       Text(
                         "\$${widget.itemPrice}",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
 
 

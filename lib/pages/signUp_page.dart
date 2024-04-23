@@ -202,7 +202,13 @@ class _SignUpState extends State<SignUp> {
                                               await _localDataSaver
                                                   .saveEmail(email);
 
-                                              await _localDataSaver.saveWalletAmount(0);
+                                              await _localDataSaver
+                                                  .saveWalletAmount(0);
+
+                                              print("--------------->>>>>>>>>>>>Printing the value from the singup page of the uid of the user: ${_authServices.user!.uid.toString()}");
+
+                                              await _localDataSaver.saveUID(
+                                                  _authServices.user!.uid.toString());
 
                                               print(
                                                   "information saved to localDatabase successfully");

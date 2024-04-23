@@ -1,10 +1,7 @@
-import 'package:abhi_lo/models/user_profile.dart';
-import 'package:abhi_lo/services/shared_prefrences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
 import 'alert_services.dart';
-import 'database_services.dart';
 
 class AuthServices {
   final GetIt _getIt = GetIt.instance;
@@ -14,7 +11,6 @@ class AuthServices {
     _firebaseAuth.authStateChanges().listen(authStateChangesStreamListner);
 
     _alertServices = _getIt.get<AlertServices>();
-
   }
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -57,6 +53,22 @@ class AuthServices {
       print(e);
     }
     return false;
+  }
+
+  Future<bool> deleteAccount() async {
+    try {
+      await _user!.delete();
+      _alertServices.showToast(text: "User Deleted");
+
+      // After deleting the user account, set _user to null
+      _user = null;
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _alertServices.showToast(text: e.toString());
+      print(e);
+      return false;
+    }
   }
 
   Future<bool> signUp({required String email, required String password}) async {

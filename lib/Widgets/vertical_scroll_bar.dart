@@ -73,7 +73,7 @@ class _ViewFoodItemsVerticallyState extends State<ViewFoodItemsVertically> {
                     Container(
                         width: MediaQuery.sizeOf(context).width / 3,
                         child: Text(
-                          widget.itemDetails.length <30 ? widget.itemDetails : widget.itemDetails.substring(0,35),
+                          widget.itemDetails.length <30 ? widget.itemDetails : "${widget.itemDetails.substring(0,35)}..",
                           style: const TextStyle(color: Colors.black54, fontSize: 12),
                         )),
                     Container(

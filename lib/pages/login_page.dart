@@ -41,6 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,16 +144,24 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(
                             width: MediaQuery.sizeOf(context).width * 0.8,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+
+                                TextButton(
+                                    onPressed: () {
+                                      _navigationServices
+                                          .pushNamed("/adminLogin");
+                                    },
+                                    child: const Text("Admin Login")),
+
                                 TextButton(
                                     onPressed: () {
                                       _navigationServices
                                           .pushNamed("/forgetPassword");
                                     },
-                                    child: Text("Forgot password?"))
+                                    child: const Text("Forget password?"))
                               ],
                             ),
                           ),
@@ -186,18 +196,33 @@ class _LoginPageState extends State<LoginPage> {
                                           UserProfile? userprofile =
                                               await _databaseServices
                                                   .getCurrentUser();
+
+                                          await _databaseServices
+                                              .setUpCartCollection(
+                                                  userprofile!);
                                           print(
                                               "-------------------->>>>>>>>>>>>>>>printing the user from login page: $userprofile");
 
                                           //Saving information to the localDataSaver:
                                           try {
+                                            print(
+                                                "------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> inside the try block of the login page which is saving the information of the user to shared preferences");
                                             await _localDataSaver
-                                                .saveName(userprofile?.name);
+                                                .saveName(userprofile.name);
                                             await _localDataSaver
-                                                .saveEmail(userprofile?.email);
+                                                .saveEmail(userprofile.email);
                                             await _localDataSaver
                                                 .saveWalletAmount(
-                                                    userprofile?.wallet);
+                                                    userprofile.wallet);
+
+
+                                            String? name =await _localDataSaver.getName();
+                                            String? uid = await _localDataSaver.getEmail();
+                                            int? walletAmount = await _localDataSaver.getWalletAmount();
+                                            print(name);
+                                            print(uid);
+                                            print(walletAmount);
+
 
                                             print(
                                                 "information saved to localDatabase successfully");
