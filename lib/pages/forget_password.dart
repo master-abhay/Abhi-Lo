@@ -8,6 +8,7 @@ import 'package:abhi_lo/services/navigation_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
@@ -104,7 +105,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                             style: const TextStyle(color: Colors.white,fontWeight: FontWeight.w600),
                             decoration: const InputDecoration(
                                 errorStyle: TextStyle(color: Colors.white)
-                                ,border: InputBorder.none
+                                ,border: InputBorder.none,
+                              hintText: "Email",
+                              hintStyle: TextStyle(color: Colors.white)
                             ),),
                         ),
                       ],

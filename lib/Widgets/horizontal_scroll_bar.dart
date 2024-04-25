@@ -90,7 +90,7 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                         style: const TextStyle(fontSize: 11,fontWeight: FontWeight.bold, color: Colors.black54),
                       ),
                       Text(
-                        "\$${widget.itemPrice}",
+                        "\₹ ${widget.itemPrice}",
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
 

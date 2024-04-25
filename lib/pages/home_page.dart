@@ -18,10 +18,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool burger = false;
-  bool iceCream = false;
-  bool noodles = false;
-  bool pizza = false;
+  bool veg = false;
+  bool nonVeg = false;
+  bool chinese = false;
+  bool sweets = false;
 
   List<String> streamCategoryList = [
     "_itemBurgerCollectionReference",
@@ -44,6 +44,9 @@ class _HomeState extends State<Home> {
     _databaseServices = _getIt.get<DatabaseServices>();
     _localDataSaver = _getIt.get<LocalDataSaver>();
     _getLocalDataFromSharepreferences();
+    setState(() {
+      veg = true;
+    });
     super.initState();
   }
 
@@ -142,60 +145,65 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         FoodOption(
-          imageName: "burger.png",
+          foodType: "Veg",
+          imageName: veg ? "veg-food.json" : "veg-food_notSelected.json",
           onTap: () {
-            burger = true;
-            iceCream = false;
-            noodles = false;
-            pizza = false;
+            veg = true;
+            nonVeg = false;
+            chinese = false;
+            sweets = false;
             setState(() {
               selectedItemCategory = streamCategoryList[0];
             });
             print("Burger");
           },
-          color: burger ? Colors.grey : Colors.white,
+          color: veg ? Colors.green.withOpacity(0.5) : Colors.white,
         ),
         FoodOption(
-          imageName: "iceCream.png",
+          foodType: "Non-Veg",
+          imageName: nonVeg ? "non-veg-food.json" : "non-veg-food_notSelected.json",
           onTap: () {
-            burger = false;
-            iceCream = true;
-            noodles = false;
-            pizza = false;
+            veg = false;
+            nonVeg = true;
+            chinese = false;
+            sweets = false;
             setState(() {
               selectedItemCategory = streamCategoryList[1];
             });
-            print("iceCream");
+            print("nonVeg");
           },
-          color: iceCream ? Colors.grey : Colors.white,
+          color: nonVeg ? Colors.orange.withOpacity(0.4) : Colors.white,
         ),
         FoodOption(
-          imageName: "noodles.png",
+          foodType: "Chinese",
+          imageName: chinese ? "chinese-food.json" : "chinese-food_notSelected.json",
           onTap: () {
-            burger = false;
-            iceCream = false;
-            noodles = true;
-            pizza = false;
+            veg = false;
+            nonVeg = false;
+            chinese = true;
+            sweets = false;
             setState(() {
               selectedItemCategory = streamCategoryList[2];
             });
-            print("noodles");
+            print("chinese");
           },
-          color: noodles ? Colors.grey : Colors.white,
+          color: chinese ? Colors.yellow.withOpacity(0.5) : Colors.white,
         ),
         FoodOption(
-          imageName: "pizza.png",
+          foodType: "Sweets",
+          imageName: sweets ? "sweets-food.json" : "sweets-food_notSelected.json",
+
           onTap: () {
-            burger = false;
-            iceCream = false;
-            noodles = false;
-            pizza = true;
+            veg = false;
+            nonVeg = false;
+            chinese = false;
+            sweets = true;
             setState(() {
               selectedItemCategory = streamCategoryList[3];
             });
-            print("pizza");
+            print("sweets");
           },
-          color: pizza ? Colors.grey : Colors.white,
+          color: sweets ? Colors.red.withOpacity(0.4) : Colors.white,
         ),
       ],
     );

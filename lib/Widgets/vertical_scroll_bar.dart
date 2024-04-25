@@ -79,7 +79,7 @@ class _ViewFoodItemsVerticallyState extends State<ViewFoodItemsVertically> {
                     Container(
                         width: MediaQuery.sizeOf(context).width / 3,
                         child: Text(
-                          "\$${widget.itemPrice}",
+                          "\₹ ${widget.itemPrice}",
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
                         )),
