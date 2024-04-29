@@ -1,4 +1,6 @@
 import 'package:abhi_lo/admin/admin_widgets/Admin_custom_form_field.dart';
+import 'package:abhi_lo/services/alert_services.dart';
+import 'package:abhi_lo/services/database_services.dart';
 import 'package:abhi_lo/services/navigation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -14,27 +16,32 @@ class AdminLogin extends StatefulWidget {
 
 class _AdminLoginState extends State<AdminLogin> {
 
+  //for Button:
+  bool isLoading = false;
 
   String? username, password;
- late GlobalKey<FormState> _adminLoginFormKey;
- late NavigationServices _navigationServices;
+  late GlobalKey<FormState> _adminLoginFormKey;
+  late NavigationServices _navigationServices;
 
+  late DatabaseServices _databaseServices;
+  late AlertServices _alertServices;
 
- @override
+  @override
   void initState() {
-   final GetIt _getIt = GetIt.instance;
-   _adminLoginFormKey = GlobalKey<FormState>();
-   _navigationServices = _getIt.get<NavigationServices>();
+    final GetIt _getIt = GetIt.instance;
+    _adminLoginFormKey = GlobalKey<FormState>();
+    _navigationServices = _getIt.get<NavigationServices>();
+    _databaseServices = _getIt.get<DatabaseServices>();
+    _alertServices = _getIt.get<AlertServices>();
+
 
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-
       backgroundColor: const Color(0xffededeb),
       body: buildUI(),
     );
@@ -63,10 +70,10 @@ class _AdminLoginState extends State<AdminLogin> {
               horizontal: MediaQuery.sizeOf(context).width * 0.03),
           child: Center(
               child: Form(
-                key: _adminLoginFormKey,
-                child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+            key: _adminLoginFormKey,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Container(
                   padding: EdgeInsets.symmetric(
                       vertical: MediaQuery.sizeOf(context).height * 0.08,
@@ -88,7 +95,8 @@ class _AdminLoginState extends State<AdminLogin> {
                         borderRadius: BorderRadius.circular(25),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: MediaQuery.sizeOf(context).height * 0.08,
+                              vertical:
+                                  MediaQuery.sizeOf(context).height * 0.08,
                               horizontal:
                                   MediaQuery.sizeOf(context).width * 0.05),
                           child: Column(
@@ -106,7 +114,8 @@ class _AdminLoginState extends State<AdminLogin> {
                                 ),
                               ),
                               SizedBox(
-                                height: MediaQuery.sizeOf(context).height * 0.03,
+                                height:
+                                    MediaQuery.sizeOf(context).height * 0.03,
                               ),
                               SizedBox(
                                 width: MediaQuery.sizeOf(context).width * 0.7,
@@ -119,20 +128,52 @@ class _AdminLoginState extends State<AdminLogin> {
                                 ),
                               ),
                               SizedBox(
-                                height: MediaQuery.sizeOf(context).height * 0.03,
+                                height:
+                                    MediaQuery.sizeOf(context).height * 0.03,
                               ),
                               SizedBox(
-                           width: MediaQuery.sizeOf(context).width * 0.7,
+                                width: MediaQuery.sizeOf(context).width * 0.7,
                                 child: CustomButton(
                                   text: 'Login ',
-                                  isLoading: false,
-                                  onPressed: () async{
-                                    if(_adminLoginFormKey.currentState!.validate()??false){
+                                  isLoading: isLoading,
+                                  onPressed: () async {
+
+
+                                    if (_adminLoginFormKey.currentState!
+                                            .validate() ??
+                                        false) {
+
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+
                                       _adminLoginFormKey.currentState!.save();
 
-                                      _navigationServices.pushReplacement("/adminHome");
+                                      Map<String, dynamic> data =
+                                          await _databaseServices.loginAdmin();
+
+                                      print(data);
+
+                                      if (username == data['username'] &&
+                                          password == data["password"]) {
+                                        print("Admin Verified");
+                                        _alertServices.showToast(text: "Login Successful");
+
+                                        _navigationServices.pushReplacement("/adminHome");
+
+                                        setState(() {
+                                          isLoading = false;
+                                        });
 
 
+                                      } else {
+                                        print("Admin not Verified, Wrong Credentials");
+                                        _alertServices.showToast(text: "You Entered Wrong Credentials");
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+
+                                      }
 
                                     }
                                   },
@@ -146,9 +187,9 @@ class _AdminLoginState extends State<AdminLogin> {
                     ],
                   ),
                 )
-                            ],
-                          ),
-              )),
+              ],
+            ),
+          )),
         )
       ],
     );

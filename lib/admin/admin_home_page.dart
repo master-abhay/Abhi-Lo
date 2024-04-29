@@ -11,9 +11,7 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
-
   late NavigationServices _navigationServices;
-
 
   @override
   void initState() {
@@ -32,6 +30,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   AppBar _appBar() {
     return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_outlined),
+        onPressed: () {
+          _navigationServices.goBack();
+        },
+      ),
       title: Text("Home Admin", style: boldTextStyle()),
       centerTitle: true,
     );
@@ -39,8 +43,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Widget _buildUI() {
     return GestureDetector(
-      onTap: (){
-_navigationServices.pushNamed("/addFood");
+      onTap: () {
+        _navigationServices.pushNamed("/addFood");
       },
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -58,22 +62,26 @@ _navigationServices.pushNamed("/addFood");
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-      flex: 3,
+                  flex: 3,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         vertical: MediaQuery.sizeOf(context).height * 0.02,
-                        horizontal: MediaQuery.sizeOf(context).width * 0.03),                  child: Image.asset(
+                        horizontal: MediaQuery.sizeOf(context).width * 0.03),
+                    child: Image.asset(
                       "images/dummyImage.jpg",
                     ),
                   )),
               SizedBox(
                 width: MediaQuery.sizeOf(context).width * 0.03,
               ),
-             const Expanded(
-                flex:4,
+              const Expanded(
+                  flex: 4,
                   child: Text(
                     "Add Food Items",
-                    style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ))
             ],
           ),

@@ -133,7 +133,7 @@ class _WalletPageState extends State<WalletPage> {
                     final user = snapshot.data as UserProfile;
                     final currentAmount = user.wallet.toString();
                     return Text(
-                      "\$" + "$currentAmount",
+                      "\₹ " + "$currentAmount",
                       style: boldTextStyle(),
                     );
                   } else if (snapshot.connectionState == ConnectionState.waiting ||
@@ -230,7 +230,7 @@ class _WalletPageState extends State<WalletPage> {
             horizontal: MediaQuery.sizeOf(context).width * 0.01,
             vertical: MediaQuery.sizeOf(context).height * 0.003),
         child: Text(
-          "\$${amount}",
+          "\₹ ${amount}",
           style: midBoldTextStyle(),
         ),
       ),

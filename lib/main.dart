@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 Future<void> main() async {
   await setup();
   FirebaseFirestore.instance.settings =
-      const Settings(persistenceEnabled: true);
+  const Settings(persistenceEnabled: true);
   runApp(MyApp());
 }
 
@@ -26,10 +26,6 @@ Future<void> setup() async {
 
   await setupFirebase();
   await registerServices();
-
-
-
-
 }
 
 class MyApp extends StatelessWidget {
@@ -52,7 +48,9 @@ class MyApp extends StatelessWidget {
           textTheme: GoogleFonts.poppinsTextTheme()),
       navigatorKey: _navigationServices.getNavigatorKey,
       routes: _navigationServices.routes,
-      initialRoute:_authServices.user != null ? "/curvedNavigationBar" : "/onBoard",
+      initialRoute: _authServices.user != null
+          ? "/curvedNavigationBar"
+          : "/onBoard",
       // initialRoute: "/adminHome",
       // initialRoute:"/adminLogin",
 

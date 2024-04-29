@@ -375,9 +375,9 @@ class _ProfilepageState extends State<Profilepage> {
 
               print(result);
               if (result) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    backgroundColor: Colors.orangeAccent,
-                    content: Text("Logging Out")));
+                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //     backgroundColor: Colors.orangeAccent,
+                //     content: Text("Logging Out")));
                 _navigationServices.pushReplacement("/login");
               }
             },

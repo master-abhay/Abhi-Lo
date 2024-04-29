@@ -64,7 +64,10 @@ class _OnBoardState extends State<OnBoard> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(onBoardContentsList[i].image),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height*0.6,
+                          child: Image.asset(onBoardContentsList[i].image,
+                          fit: BoxFit.cover,)),
                       Column(
                         children: [
                           Text(onBoardContentsList[i].title,

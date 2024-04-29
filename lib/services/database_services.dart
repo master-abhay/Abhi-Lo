@@ -1,5 +1,6 @@
 import 'package:abhi_lo/models/addItem_model.dart';
 import 'package:abhi_lo/models/user_profile.dart';
+import 'package:abhi_lo/services/alert_services.dart';
 import 'package:abhi_lo/services/auth_Services.dart';
 import 'package:abhi_lo/services/shared_prefrences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,31 +11,36 @@ import '../models/cart_model.dart';
 class DatabaseServices {
   late AuthServices _authServices;
   late LocalDataSaver _localDataSaver;
+  late AlertServices _alertServices;
 
   final FirebaseFirestore _firebaseFirestore =
       FirebaseFirestore.instance; //this is a database
 
   CollectionReference? _userCollectionReference;
-  CollectionReference? _itemIceCreamCollectionReference;
-  CollectionReference? _itemNoodlesCollectionReference;
+  CollectionReference? _itemNonVegCollectionReference;
+  CollectionReference? _itemChineseCollectionReference;
 
-  CollectionReference? _itemPizzaCollectionReference;
+  CollectionReference? _itemSweetsCollectionReference;
 
-  CollectionReference? _itemBurgerCollectionReference;
+  CollectionReference? _itemVegCollectionReference;
 
   CollectionReference? _cartCollectionReferences;
 
+  CollectionReference? _adminCollectionReferences;
+
   DatabaseServices() {
     GetIt _getIt = GetIt.instance;
+    _alertServices = _getIt.get<AlertServices>();
     _authServices = _getIt.get<AuthServices>();
     _localDataSaver = _getIt.get<LocalDataSaver>();
 
     // getLocalData().then((value) {
     _setupCollectionReferences();
-    _setupIceCreamCollectionReferences();
-    _setupNoodlesCollectionReferences();
-    _setupPizzaCollectionReferences();
-    _setupBurgerCollectionReferences();
+    _setupNonVegCollectionReferences();
+    _setupChineseCollectionReferences();
+    _setupSweetsCollectionReferences();
+    _setupVegCollectionReferences();
+
     // _setupCartCollectionReferences();
     // });
   }
@@ -84,8 +90,20 @@ class DatabaseServices {
   }
 
   Future<void> deleteUser(String uid) async {
+    // Delete the user document
     await _userCollectionReference!.doc(uid).delete();
+
+    // Delete the user's cart collection
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Cart");
+    final cartSnapshot = await _cartCollectionReferences!.get();
+    for (QueryDocumentSnapshot doc in cartSnapshot.docs) {
+      await doc.reference.delete();
+    }
   }
+
 
   //Correct Version
   // void _setupItemCollectionRefrences() {
@@ -97,36 +115,36 @@ class DatabaseServices {
   //           toFirestore: (AddItem addItem, options) => addItem.toFirestore());
   // }
 
-  void _setupIceCreamCollectionReferences() {
-    _itemIceCreamCollectionReference = _firebaseFirestore
-        .collection("Ice-Cream")
+  void _setupVegCollectionReferences() {
+    _itemVegCollectionReference = _firebaseFirestore
+        .collection("Veg")
         .withConverter<AddItem>(
             fromFirestore: (snapshots, _) =>
                 AddItem.fromFirestore(snapshots, _),
             toFirestore: (AddItem addItem, options) => addItem.toFirestore());
   }
 
-  void _setupNoodlesCollectionReferences() {
-    _itemNoodlesCollectionReference = _firebaseFirestore
-        .collection("Noodles")
+  void _setupNonVegCollectionReferences() {
+    _itemNonVegCollectionReference = _firebaseFirestore
+        .collection("Non-Veg")
         .withConverter<AddItem>(
             fromFirestore: (snapshots, _) =>
                 AddItem.fromFirestore(snapshots, _),
             toFirestore: (AddItem addItem, options) => addItem.toFirestore());
   }
 
-  void _setupPizzaCollectionReferences() {
-    _itemPizzaCollectionReference = _firebaseFirestore
-        .collection("Pizza")
+  void _setupChineseCollectionReferences() {
+    _itemChineseCollectionReference = _firebaseFirestore
+        .collection("Chinese")
         .withConverter<AddItem>(
             fromFirestore: (snapshots, _) =>
                 AddItem.fromFirestore(snapshots, _),
             toFirestore: (AddItem addItem, options) => addItem.toFirestore());
   }
 
-  void _setupBurgerCollectionReferences() {
-    _itemBurgerCollectionReference = _firebaseFirestore
-        .collection("Burger")
+  void _setupSweetsCollectionReferences() {
+    _itemSweetsCollectionReference = _firebaseFirestore
+        .collection("Sweets")
         .withConverter<AddItem>(
             fromFirestore: (snapshots, _) =>
                 AddItem.fromFirestore(snapshots, _),
@@ -134,58 +152,64 @@ class DatabaseServices {
   }
 
   Future<bool> setUpItem(AddItem addItem) async {
-    final _categoryList = ['Ice-Cream', "Pizza", "Noodles", "Burger"];
+    final _categoryList = ['Veg', "Non-Veg", "Chinese", "Sweets"];
 
     String? itemCategory = addItem.itemCategory;
 
     if (itemCategory == _categoryList[0]) {
-      await _itemIceCreamCollectionReference!
+      await _itemVegCollectionReference!
           .doc(
               "${DateTime.now().microsecondsSinceEpoch.toString()}${addItem.itemCategory}")
           .set(addItem);
       return true;
     }
+
     if (itemCategory == _categoryList[1]) {
-      await _itemPizzaCollectionReference!
+      await _itemNonVegCollectionReference!
           .doc(
               "${DateTime.now().microsecondsSinceEpoch.toString()}${addItem.itemCategory}")
           .set(addItem);
       return true;
     }
+
     if (itemCategory == _categoryList[2]) {
-      await _itemNoodlesCollectionReference!
+      await _itemChineseCollectionReference!
           .doc(
               "${DateTime.now().microsecondsSinceEpoch.toString()}${addItem.itemCategory}")
           .set(addItem);
       return true;
     }
     if (itemCategory == _categoryList[3]) {
-      await _itemBurgerCollectionReference!
+      await _itemSweetsCollectionReference!
           .doc(
               "${DateTime.now().microsecondsSinceEpoch.toString()}${addItem.itemCategory}")
           .set(addItem);
       return true;
     }
+
     return false;
   }
 
   //Stream to get items from collection Reference:
-  Stream<QuerySnapshot<AddItem>>? getAllIceCreamDocuments(
+  Stream<QuerySnapshot<AddItem>>? getAllDocuments(
       String collectionReferenceName) {
-    if (collectionReferenceName == "_itemIceCreamCollectionReference") {
-      return _itemIceCreamCollectionReference!.snapshots()
+    if (collectionReferenceName == "_itemVegCollectionReference") {
+      return _itemVegCollectionReference!.snapshots()
           as Stream<QuerySnapshot<AddItem>>;
     }
-    if (collectionReferenceName == "_itemPizzaCollectionReference") {
-      return _itemPizzaCollectionReference!.snapshots()
+
+    if (collectionReferenceName == "_itemNonVegCollectionReference") {
+      return _itemNonVegCollectionReference!.snapshots()
           as Stream<QuerySnapshot<AddItem>>;
     }
-    if (collectionReferenceName == "_itemBurgerCollectionReference") {
-      return _itemBurgerCollectionReference!.snapshots()
+
+    if (collectionReferenceName == "_itemChineseCollectionReference") {
+      return _itemChineseCollectionReference!.snapshots()
           as Stream<QuerySnapshot<AddItem>>;
     }
-    if (collectionReferenceName == "_itemNoodlesCollectionReference") {
-      return _itemNoodlesCollectionReference!.snapshots()
+
+    if (collectionReferenceName == "_itemSweetsCollectionReference") {
+      return _itemSweetsCollectionReference!.snapshots()
           as Stream<QuerySnapshot<AddItem>>;
     }
     return null;
@@ -252,6 +276,20 @@ class DatabaseServices {
             toFirestore: (Cart cart, _) => cart.toFireStore());
   }
 
+  // // original code:
+  // Future<void> setupCart(Cart cart, String? uid) async {
+  //   _cartCollectionReferences = _firebaseFirestore
+  //       .collection("Users")
+  //       .doc(uid)
+  //       .collection("Cart")
+  //       .withConverter<Cart>(
+  //           fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+  //           toFirestore: (Cart cart, _) => cart.toFireStore());
+  //
+  //   await _cartCollectionReferences!.doc(cart.itemId).set(cart);
+  //   print("Executed Successfully");
+  // }
+
   Future<void> setupCart(Cart cart, String? uid) async {
     _cartCollectionReferences = _firebaseFirestore
         .collection("Users")
@@ -261,7 +299,7 @@ class DatabaseServices {
             fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
             toFirestore: (Cart cart, _) => cart.toFireStore());
 
-    await _cartCollectionReferences!.doc(cart.itemId).set(cart);
+    await _cartCollectionReferences!.doc(cart.itemName).set(cart);
     print("Executed Successfully");
   }
 
@@ -292,15 +330,67 @@ class DatabaseServices {
     }
   }
 
-  Future<void> deleteCartItem(String uid,String cartItemId) async{
+  Future<bool> checkItemInCartExists(Cart cart, String? uid) async {
     _cartCollectionReferences = _firebaseFirestore
         .collection("Users")
         .doc(uid)
         .collection("Cart")
         .withConverter<Cart>(
-        fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
-        toFirestore: (Cart cart, _) => cart.toFireStore());
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
 
-    await _cartCollectionReferences!.doc(cartItemId).delete();
+    final result = await _cartCollectionReferences?.doc(cart.itemName).get();
+
+    if (result != null &&
+        result.data() != null &&
+        !result.metadata.isFromCache) {
+      // Existing item in the cart
+      return true;
+    }
+// Item not found or deleted
+    return false;
+
+  }
+
+  Future updateItemCount(String itemName,int quantity) async{
+   await _cartCollectionReferences!.doc(itemName).update({'quantity' : FieldValue.increment(quantity)});
+  }
+
+  // // original code:
+  // Future<void> deleteCartItem(String uid, String cartItemId) async {
+  //   _cartCollectionReferences = _firebaseFirestore
+  //       .collection("Users")
+  //       .doc(uid)
+  //       .collection("Cart")
+  //       .withConverter<Cart>(
+  //           fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+  //           toFirestore: (Cart cart, _) => cart.toFireStore());
+  //
+  //   await _cartCollectionReferences!.doc(cartItemId).delete();
+  // }
+  Future<void> deleteCartItem(String uid, String itemName) async {
+    _cartCollectionReferences = _firebaseFirestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Cart")
+        .withConverter<Cart>(
+            fromFirestore: (snapshots, _) => Cart.fromFirestore(snapshots, _),
+            toFirestore: (Cart cart, _) => cart.toFireStore());
+
+    await _cartCollectionReferences!.doc(itemName).delete();
+  }
+
+  Future<Map<String, dynamic>> loginAdmin() async {
+    print(
+        "------------------Inside the adminLoginAccess method in database services............");
+    _adminCollectionReferences = _firebaseFirestore.collection("Admin");
+
+    final documentSnap = await _adminCollectionReferences!.doc("admin").get();
+
+    final data = documentSnap.data();
+
+    print(
+        "--------------------------Returning the details of the admin from adminLoginAccess function");
+    return data as Map<String, dynamic>;
   }
 }

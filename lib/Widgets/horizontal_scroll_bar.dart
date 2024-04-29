@@ -35,7 +35,7 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
             padding: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width*0.02,vertical:MediaQuery.sizeOf(context).height*0.02 ),
             child: Column(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
@@ -45,8 +45,8 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                     children: [
                       Container
                         (
-                        height: 110,
-                        width: 170,
+                        height: MediaQuery.of(context).size.height*0.15,
+                        width: MediaQuery.of(context).size.width*0.5,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: Image.network(
@@ -73,6 +73,9 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height*0.005,
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(
                       horizontal: MediaQuery.sizeOf(context).width * 0.02),
@@ -82,7 +85,7 @@ class _ViewFoodItemsHorizontallyState extends State<ViewFoodItemsHorizontally> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.itemName,
+                        widget.itemName.length < 20 ? widget.itemName : "${widget.itemName.substring(0,20)}..",
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(

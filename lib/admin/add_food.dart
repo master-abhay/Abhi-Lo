@@ -21,6 +21,8 @@ class AddFood extends StatefulWidget {
 }
 
 class _AddFoodState extends State<AddFood> {
+  // for button:
+  bool isLoading = false;
   late MediaServices _mediaServices;
   File? selectedImage;
 
@@ -28,7 +30,7 @@ class _AddFoodState extends State<AddFood> {
   String? itemName, itemPrice, itemDetail, itemCategory;
 
   String? _selectedCategoryValue = "";
-  final _categoryList = ['Ice-Cream', "Pizza", "Noodles", "Burger"];
+  final _categoryList = ['Veg', "Non-Veg", "Chinese", "Sweets"];
 
   late NavigationServices _navigationServices;
   late StorageServices _storageServices;
@@ -184,7 +186,8 @@ class _AddFoodState extends State<AddFood> {
                 AddItemFormField(
                   onSaved: (value) {
                     setState(() {
-                      itemDetail = value!.replaceAll(RegExp(r'\s+'), ' ').trim();
+                      itemDetail =
+                          value!.replaceAll(RegExp(r'\s+'), ' ').trim();
                       print(
                           "-------------------->>>>>>>>>>>>>>>>>printing the itemName: $itemDetail");
                     });
@@ -246,8 +249,12 @@ class _AddFoodState extends State<AddFood> {
                         width: MediaQuery.sizeOf(context).width * 0.5,
                         child: CustomButton(
                             text: "Add Item",
-                            isLoading: false,
+                            isLoading: isLoading,
                             onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+
                               if (selectedImage != null &&
                                   _addItemFormKey.currentState!.validate()) {
                                 //Saving the values of the form:
@@ -272,11 +279,19 @@ class _AddFoodState extends State<AddFood> {
                                 bool result =
                                     await _databaseServices.setUpItem(addItem);
                                 if (result) {
+                                  setState(() {});
                                   _alertServices.showToast(
                                       text: "Item Added successfully");
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 } else {
+                                  setState(() {});
                                   _alertServices.showToast(
                                       text: "Something went Wrong");
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 }
                               }
                             },

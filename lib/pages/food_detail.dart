@@ -1,5 +1,6 @@
 import 'package:abhi_lo/models/cart_model.dart';
 import 'package:abhi_lo/models/user_profile.dart';
+import 'package:abhi_lo/services/alert_services.dart';
 import 'package:abhi_lo/services/database_services.dart';
 import 'package:abhi_lo/services/navigation_services.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _FoodDetailState extends State<FoodDetail> {
   final GetIt _getIt = GetIt.instance;
   late NavigationServices _navigationServices;
   late DatabaseServices _databaseServices;
+  late AlertServices _alertServices;
 
   int _totalAmount = 0;
 
@@ -30,6 +32,7 @@ class _FoodDetailState extends State<FoodDetail> {
   void initState() {
     _navigationServices = _getIt.get<NavigationServices>();
     _databaseServices = _getIt.get<DatabaseServices>();
+    _alertServices = _getIt.get<AlertServices>();
 
     _totalAmount = int.parse(widget.addItem.itemPrice!);
     super.initState();
@@ -278,7 +281,7 @@ class _FoodDetailState extends State<FoodDetail> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Text(
-                "\$${_totalAmount.toString()}",
+                "\₹ ${_totalAmount.toString()}",
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               )
@@ -291,23 +294,42 @@ class _FoodDetailState extends State<FoodDetail> {
                   print(
                       "Total Amount is -------------------------->>>>>>>>>>>>>>>>>>$_totalAmount");
                   Cart cart = Cart(
-                      itemName: widget.addItem.itemName,
-                      quantity: quantity.toString(),
-                      totalAmount: _totalAmount.toString(),
-                      imageUrl: widget.addItem.imgUrl,
-                      itemId: DateTime.now().microsecondsSinceEpoch.toString() + DateTime.now().toString());
+                      itemName: widget.addItem.itemName!,
+                      quantity: quantity,
+                      itemPrice: widget.addItem.itemPrice.toString(),
+                      imageUrl: widget.addItem.imgUrl!,
+                      itemId: DateTime.now().microsecondsSinceEpoch.toString() +
+                          DateTime.now().toString());
 
-                  print(cart.totalAmount);
+                  print(cart.itemPrice);
 
                   UserProfile? userProfile =
                       await _databaseServices.getCurrentUser();
                   print("-------------->>>>>>>>>>>${userProfile?.uid}");
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      elevation: 5,
-                      backgroundColor: Colors.orangeAccent,
-                      content: Text("Added to Cart")));
 
-                  await _databaseServices.setupCart(cart, userProfile!.uid);
+                  final result = await _databaseServices.checkItemInCartExists(
+                      cart, userProfile!.uid);
+
+                  if (result) {
+                    await _databaseServices.updateItemCount(
+                        cart.itemName!, quantity);
+                    setState(() {});
+                    _alertServices.showToast(text: "Added to cart");
+
+                    print(
+                        '------------------------->>>>>>>>>>>>>>>>>>>Item already exists in cart.');
+                  } else {
+                    print(
+                        '------------------------->>>>>>>>>>>>>>>>>>>Item does\'nt exists in cart.');
+                    await _databaseServices.setupCart(cart, userProfile.uid);
+                    setState(() {});
+                    _alertServices.showToast(text: "Added to cart");
+                  }
+
+                  // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //     elevation: 5,
+                  //     backgroundColor: Colors.orangeAccent,
+                  //     content: Text("Added to Cart")));
                 },
                 child: Material(
                     color: Colors.green,

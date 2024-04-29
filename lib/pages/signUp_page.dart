@@ -196,6 +196,23 @@ class _SignUpState extends State<SignUp> {
                                                         .user!.email
                                                         .toString()));
 
+
+
+
+
+                                            UserProfile? userprofile =
+                                            await _databaseServices
+                                                .getCurrentUser();
+
+                                            await _databaseServices
+                                                .setUpCartCollection(
+                                                userprofile!);
+
+
+
+
+
+
                                             try {
                                               await _localDataSaver
                                                   .saveName(name);

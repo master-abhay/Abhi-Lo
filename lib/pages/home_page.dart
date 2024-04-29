@@ -24,10 +24,10 @@ class _HomeState extends State<Home> {
   bool sweets = false;
 
   List<String> streamCategoryList = [
-    "_itemBurgerCollectionReference",
-    "_itemIceCreamCollectionReference",
-    "_itemNoodlesCollectionReference",
-    "_itemPizzaCollectionReference",
+    "_itemVegCollectionReference",
+    "_itemNonVegCollectionReference",
+    "_itemChineseCollectionReference",
+    "_itemSweetsCollectionReference",
   ];
 
   late String selectedItemCategory;
@@ -212,7 +212,9 @@ class _HomeState extends State<Home> {
   Widget _viewFoodItemsHorizontally() {
     return Container(
       // color: Colors.red,
-      height: MediaQuery.sizeOf(context).height * 0.3,
+      // height: MediaQuery.sizeOf(context).height * 0.37,
+      height: MediaQuery.sizeOf(context).height/3,
+
       // Set the height of the horizontal list
       padding: EdgeInsets.symmetric(
           vertical: MediaQuery.sizeOf(context).height * 0.01,
@@ -232,7 +234,7 @@ class _HomeState extends State<Home> {
   Widget getStreamBuilder(
       {required String itemCategory, required String scrollDirection}) {
     return StreamBuilder(
-      stream: _databaseServices.getAllIceCreamDocuments(itemCategory),
+      stream: _databaseServices.getAllDocuments(itemCategory),
       builder: (context, snapshots) {
         if (snapshots.connectionState == ConnectionState.waiting ||
             snapshots.connectionState == ConnectionState.none) {

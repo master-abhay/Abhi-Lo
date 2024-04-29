@@ -26,13 +26,27 @@ class _FoodCartState extends State<FoodCart> {
   late AuthServices _authServices;
   String? uid;
 
+// // old Version
+  // Future<void> getLocalData() async {
+  //   final _uid = await _localDataSaver.getUID() ?? _authServices.user!.uid;
+  //   print(
+  //       "-------------verifying that uid in getLocalData() captured or not: $_uid");
+  //
+  //   setState(() {
+  //     uid = _uid!;
+  //   });
+  // }
+
   Future<void> getLocalData() async {
-    final _uid = await _localDataSaver.getUID() ?? _authServices.user!.uid;
+    String? _uid = await _localDataSaver.getUID();
+    if (_uid == null && _authServices.user != null) {
+      _uid = _authServices.user!.uid;
+    }
     print(
         "-------------verifying that uid in getLocalData() captured or not: $_uid");
 
     setState(() {
-      uid = _uid!;
+      uid = _uid;
     });
   }
 
@@ -48,9 +62,10 @@ class _FoodCartState extends State<FoodCart> {
     _authServices = _getIt.get<AuthServices>();
 
     getLocalData();
-    // print("-------------verifying that uid in initState() captured or not: $uid");
+    print(
+        "-------------verifying that uid in initState() captured or not: $uid");
 
-    Future.delayed(const Duration(seconds: 3)).then((value) {
+    Future.delayed(const Duration(seconds: 2)).then((value) {
       setState(() {});
     });
 
@@ -61,7 +76,10 @@ class _FoodCartState extends State<FoodCart> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: buildUI(), // Perform null check on uid
+      body: (uid != null)
+          ? buildUI()
+          : const Center(
+              child: CircularProgressIndicator()), // Perform null check on uid
     );
   }
 
@@ -108,32 +126,39 @@ class _FoodCartState extends State<FoodCart> {
               child: Text("Something went Wrong"),
             );
           }
+
           if (snapshots.hasData && snapshots.data != null) {
+            totalAmount = 0;
             final _snapshotsList = snapshots.data!.docs;
             print(_snapshotsList);
-            // return Text("Data Accessed");
+
             return ListView.builder(
                 itemCount: _snapshotsList.length,
                 itemBuilder: (context, index) {
                   final cartItem = _snapshotsList[index].data();
+                  print(cartItem);
 
-                  totalAmount = totalAmount +
-                      int.parse(_snapshotsList[index].data().totalAmount!);
-                  print(totalAmount.toString());
+                  print("priting the total amount from cart item----------------->>>>>>>>>>>>>>>>>>${cartItem.itemPrice}");
+
+
+                    totalAmount = totalAmount +
+                        (int.parse(_snapshotsList[index].data().itemPrice!) *
+                            _snapshotsList[index].data().quantity!);
+
 
                   return Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.04,
                         vertical: MediaQuery.of(context).size.height * 0.01),
                     child: Material(
-                      elevation: 5,
+                      elevation: 1,
                       borderRadius: BorderRadius.circular(10),
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                                MediaQuery.of(context).size.height * 0.008,
+                            MediaQuery.of(context).size.height * 0.008,
                             horizontal:
-                                MediaQuery.of(context).size.width * 0.03),
+                            MediaQuery.of(context).size.width * 0.03),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,29 +168,32 @@ class _FoodCartState extends State<FoodCart> {
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                       vertical:
-                                          MediaQuery.of(context).size.height * 0.04,
+                                      MediaQuery.of(context).size.height *
+                                          0.04,
                                       horizontal:
-                                          MediaQuery.of(context).size.width * 0.04),
+                                      MediaQuery.of(context).size.width *
+                                          0.04),
                                   decoration: BoxDecoration(
                                       border: Border.all(color: Colors.black),
                                       borderRadius: BorderRadius.circular(10)),
-                                  child: Text(cartItem.quantity!),
+                                  child: Text(cartItem.quantity.toString()),
                                 ),
-
                                 SizedBox(
-                                  width: MediaQuery.sizeOf(context).width * 0.04,
+                                  width:
+                                  MediaQuery.sizeOf(context).width * 0.04,
                                 ),
                                 Material(
-                                  elevation: 5,
+                                  elevation: 2,
                                   borderRadius: BorderRadius.circular(50),
                                   color: Colors.grey,
                                   child: Container(
-                                    height: 100,
-                                    width: 100,
+                                    height: MediaQuery.of(context).size.height*0.1,
+                                    width: MediaQuery.of(context).size.width*0.25,
                                     decoration: BoxDecoration(
                                         color: Colors.orangeAccent,
-                                        border: Border.all(color: Colors.blueGrey),
-                                        borderRadius: BorderRadius.circular(50)),
+                                        // border: Border.all(color: Colors.blueGrey),
+                                        borderRadius:
+                                        BorderRadius.circular(50)),
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.circular(50),
                                         child: Image.network(
@@ -175,44 +203,78 @@ class _FoodCartState extends State<FoodCart> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: MediaQuery.sizeOf(context).width * 0.04,
+                                  width:
+                                  MediaQuery.sizeOf(context).width * 0.04,
                                 ),
-                                Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      cartItem.itemName!,
-                                      style: boldTextStyle(),
-                                    ),
-                                    Text(
-                                      "\$" + "${cartItem.totalAmount}",
-                                      style: semiboldTextStyle(),
-                                    )
-                                  ],
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 4,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        cartItem.itemName!,
+                                        style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+
+                                        "\₹ ${int.parse(cartItem.itemPrice!) * cartItem.quantity!}",
+                                        style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 16),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
+                            Column(
+                              children: [
+                                _quantityButton(
+                                    icon: const Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      // size: 22,
+                                    ),
+                                    onTap: () async {
+                                      await _databaseServices.updateItemCount(
+                                          cartItem.itemName!, 1);
+                                      setState(() {});
+                                    }),
+                                IconButton(
+                                    onPressed: () async {
+                                      // // original code:
+                                      // await _databaseServices.deleteCartItem(
+                                      //     uid!, cartItem.itemId!);
 
+                                      await _databaseServices.deleteCartItem(
+                                          uid!, cartItem.itemName!);
+                                      setState(() {});
+                                      _alertServices.showToast(
+                                          text: "Item Removed from Cart");
+                                    },
+                                    icon: const Icon(Icons.delete_outline)),
+                                _quantityButton(
+                                    icon: const Icon(
+                                      Icons.remove,
+                                      color: Colors.white,
+                                      // size: 22,
+                                    ),
+                                    onTap: () async {
+                                      await _databaseServices.updateItemCount(
+                                          cartItem.itemName!,
+                                          cartItem.quantity! != 1 ? -1 : 0);
 
-                            IconButton(
-                                onPressed: () async {
-                                  await _databaseServices.deleteCartItem(
-                                      uid!, cartItem.itemId!);
-                                  setState(() {
-
-                                  });
-                                  _alertServices.showToast(text: "Item Removed from Cart");
-
-
-                                },
-                                icon: const Icon(Icons.delete_outline))
+                                      setState(() {});
+                                    }),
+                              ],
+                            )
                           ],
                         ),
                       ),
                     ),
                   );
+
                 });
           } else {
             return Container();
@@ -241,7 +303,7 @@ class _FoodCartState extends State<FoodCart> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "\$ ${totalAmount.toString()}",
+                  "\₹ ${totalAmount.toString()}",
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -280,6 +342,18 @@ class _FoodCartState extends State<FoodCart> {
                     buttonColor: Colors.green))
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _quantityButton({required Icon icon, required Function() onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Material(
+        elevation: 2,
+        color: Colors.green,
+        borderRadius: BorderRadius.circular(10),
+        child: icon,
       ),
     );
   }

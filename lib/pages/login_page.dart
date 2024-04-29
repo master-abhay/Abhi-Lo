@@ -41,8 +41,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,20 +146,18 @@ class _LoginPageState extends State<LoginPage> {
                               mainAxisSize: MainAxisSize.max,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-
                                 TextButton(
                                     onPressed: () {
                                       _navigationServices
                                           .pushNamed("/adminLogin");
                                     },
                                     child: const Text("Admin Login")),
-
                                 TextButton(
                                     onPressed: () {
                                       _navigationServices
                                           .pushNamed("/forgetPassword");
                                     },
-                                    child: const Text("Forget password?"))
+                                    child: const Text("Forgot password?"))
                               ],
                             ),
                           ),
@@ -215,14 +211,16 @@ class _LoginPageState extends State<LoginPage> {
                                                 .saveWalletAmount(
                                                     userprofile.wallet);
 
-
-                                            String? name =await _localDataSaver.getName();
-                                            String? uid = await _localDataSaver.getEmail();
-                                            int? walletAmount = await _localDataSaver.getWalletAmount();
+                                            String? name =
+                                                await _localDataSaver.getName();
+                                            String? uid = await _localDataSaver
+                                                .getEmail();
+                                            int? walletAmount =
+                                                await _localDataSaver
+                                                    .getWalletAmount();
                                             print(name);
                                             print(uid);
                                             print(walletAmount);
-
 
                                             print(
                                                 "information saved to localDatabase successfully");
