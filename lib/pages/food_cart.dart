@@ -206,7 +206,7 @@ class _FoodCartState extends State<FoodCart> {
                                   width:
                                   MediaQuery.sizeOf(context).width * 0.04,
                                 ),
-                                Container(
+                                SizedBox(
                                   width: MediaQuery.of(context).size.width / 4,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
@@ -216,12 +216,12 @@ class _FoodCartState extends State<FoodCart> {
                                     children: [
                                       Text(
                                         cartItem.itemName!,
-                                        style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+                                        style: const TextStyle(fontSize: 17,fontWeight: FontWeight.bold),
                                       ),
                                       Text(
 
                                         "\₹ ${int.parse(cartItem.itemPrice!) * cartItem.quantity!}",
-                                        style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 16),
+                                        style: const TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 16),
                                       )
                                     ],
                                   ),
