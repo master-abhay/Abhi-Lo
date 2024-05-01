@@ -66,14 +66,14 @@ class _ViewFoodItemsVerticallyState extends State<ViewFoodItemsVertically> {
                     Container(
                         width: MediaQuery.sizeOf(context).width / 3,
                         child: Text(
-                        widget.itemName,
+                        widget.itemName.length < 20 ? widget.itemName : "${widget.itemName.substring(0, 20)}..",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         )),
                     Container(
                         width: MediaQuery.sizeOf(context).width / 3,
                         child: Text(
-                          widget.itemDetails.length <30 ? widget.itemDetails : "${widget.itemDetails.substring(0,35)}..",
+                          widget.itemDetails.length <30 ? widget.itemDetails : "${widget.itemDetails.substring(0,30)}..",
                           style: const TextStyle(color: Colors.black54, fontSize: 12),
                         )),
                     Container(

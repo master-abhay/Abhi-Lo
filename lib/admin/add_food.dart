@@ -56,7 +56,11 @@ class _AddFoodState extends State<AddFood> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
-      body:  addingFood ? const Center(child: CircularProgressIndicator(),) : _buildUI(),
+      body: addingFood
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : _buildUI(),
     );
   }
 
@@ -252,15 +256,12 @@ class _AddFoodState extends State<AddFood> {
                             text: "Add Item",
                             isLoading: isLoading,
                             onPressed: () async {
-
-                              if (_addItemFormKey.currentState!.validate()&&
-                                  selectedImage != null ) {
-
-
-                setState(() {
-                isLoading = true;
-                addingFood = true;
-                });
+                              if (_addItemFormKey.currentState!.validate() &&
+                                  selectedImage != null) {
+                                setState(() {
+                                  isLoading = true;
+                                  addingFood = true;
+                                });
                                 //Saving the values of the form:
                                 _addItemFormKey.currentState!.save();
 

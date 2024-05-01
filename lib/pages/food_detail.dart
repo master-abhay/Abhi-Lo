@@ -46,6 +46,9 @@ class _FoodDetailState extends State<FoodDetail> {
     );
   }
 
+
+
+
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -69,17 +72,18 @@ class _FoodDetailState extends State<FoodDetail> {
 
   Widget _buildUI() {
     return SafeArea(
-        child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
-      child: Column(
+      child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
+              child: Column(
         children: [
           _foodImage(),
           _foodDetails(),
           _deliveryTime(),
           _totalPriceAndAddToCart()
         ],
-      ),
-    ));
+              ),
+            ),
+    );
   }
 
   Widget _foodImage() {
@@ -145,21 +149,29 @@ class _FoodDetailState extends State<FoodDetail> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Text(
-              //   "Mediterranean",
-              //   style: semiboldTextStyle(),
-              // ),
-              Text(
-                widget.addItem.itemName!,
-                style: boldTextStyle(),
-              )
-            ],
+
+          Container(
+            width: MediaQuery.of(context).size.width/2,
+            child: Text(
+              widget.addItem.itemName!,
+              style: boldTextStyle(),
+            ),
           ),
+          // Column(
+          //   mainAxisSize: MainAxisSize.max,
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     // Text(
+          //     //   "Mediterranean",
+          //     //   style: semiboldTextStyle(),
+          //     // ),
+          //     Text(
+          //       widget.addItem.itemName!,
+          //       style: boldTextStyle(),
+          //     )
+          //   ],
+          // ),
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

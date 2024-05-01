@@ -10,6 +10,14 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Orders'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+        ),
+      ),
+    );
   }
 }

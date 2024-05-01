@@ -43,6 +43,7 @@ class _AddItemFormFieldState extends State<AddItemFormField> {
           hintText: widget.hintText,
         ),
         maxLines: widget.maxLines != null ? widget.maxLines : 1,
+        textCapitalization: TextCapitalization.sentences,
       ),
     );
   }
