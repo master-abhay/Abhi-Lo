@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: CustomFormField(
                                 hintText: "Password",
                                 height: 70,
-                                obsecureText: false,
+                                obsecureText: true,
                                 textCapitalization: TextCapitalization.none,
                                 onSaved: (value) {
                                   setState(() {

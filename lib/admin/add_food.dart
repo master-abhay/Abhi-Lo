@@ -23,6 +23,7 @@ class AddFood extends StatefulWidget {
 class _AddFoodState extends State<AddFood> {
   // for button:
   bool isLoading = false;
+  bool addingFood = false;
   late MediaServices _mediaServices;
   File? selectedImage;
 
@@ -55,7 +56,7 @@ class _AddFoodState extends State<AddFood> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
-      body: _buildUI(),
+      body:  addingFood ? const Center(child: CircularProgressIndicator(),) : _buildUI(),
     );
   }
 
@@ -251,12 +252,15 @@ class _AddFoodState extends State<AddFood> {
                             text: "Add Item",
                             isLoading: isLoading,
                             onPressed: () async {
-                              setState(() {
-                                isLoading = true;
-                              });
 
-                              if (selectedImage != null &&
-                                  _addItemFormKey.currentState!.validate()) {
+                              if (_addItemFormKey.currentState!.validate()&&
+                                  selectedImage != null ) {
+
+
+                setState(() {
+                isLoading = true;
+                addingFood = true;
+                });
                                 //Saving the values of the form:
                                 _addItemFormKey.currentState!.save();
 
@@ -283,7 +287,9 @@ class _AddFoodState extends State<AddFood> {
                                   _alertServices.showToast(
                                       text: "Item Added successfully");
                                   setState(() {
+                                    selectedImage = null;
                                     isLoading = false;
+                                    addingFood = false;
                                   });
                                 } else {
                                   setState(() {});
@@ -291,6 +297,7 @@ class _AddFoodState extends State<AddFood> {
                                       text: "Something went Wrong");
                                   setState(() {
                                     isLoading = false;
+                                    addingFood = false;
                                   });
                                 }
                               }

@@ -197,9 +197,6 @@ class _SignUpState extends State<SignUp> {
                                                         .toString()));
 
 
-
-
-
                                             UserProfile? userprofile =
                                             await _databaseServices
                                                 .getCurrentUser();
@@ -207,9 +204,6 @@ class _SignUpState extends State<SignUp> {
                                             await _databaseServices
                                                 .setUpCartCollection(
                                                 userprofile!);
-
-
-
 
 
 

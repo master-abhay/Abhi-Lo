@@ -19,6 +19,7 @@ class _AdminLoginState extends State<AdminLogin> {
   //for Button:
   bool isLoading = false;
 
+
   String? username, password;
   late GlobalKey<FormState> _adminLoginFormKey;
   late NavigationServices _navigationServices;
@@ -124,7 +125,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                   onSaved: (value) {
                                     password = value;
                                   },
-                                  obscureText: false,
+                                  obscureText: true,
                                 ),
                               ),
                               SizedBox(
@@ -145,6 +146,7 @@ class _AdminLoginState extends State<AdminLogin> {
 
                                       setState(() {
                                         isLoading = true;
+
                                       });
 
                                       _adminLoginFormKey.currentState!.save();
@@ -163,6 +165,7 @@ class _AdminLoginState extends State<AdminLogin> {
 
                                         setState(() {
                                           isLoading = false;
+
                                         });
 
 
@@ -171,6 +174,7 @@ class _AdminLoginState extends State<AdminLogin> {
                                         _alertServices.showToast(text: "You Entered Wrong Credentials");
                                         setState(() {
                                           isLoading = false;
+
                                         });
 
                                       }
